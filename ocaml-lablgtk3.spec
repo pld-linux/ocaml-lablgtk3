@@ -12,7 +12,7 @@ Summary:	GTK+3 binding for OCaml
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla
 Name:		ocaml-lablgtk3
 Version:	3.1.1
-Release:	1
+Release:	2
 License:	LGPL with linking exceptions
 Group:		Libraries
 Source0:	https://github.com/garrigue/lablgtk/archive/%{version}/lablgtk-%{version}.tar.gz
@@ -130,6 +130,10 @@ lablgtk.
 
 %prep
 %setup -q -n lablgtk-%{version}
+
+for p in lablgtk3 lablgtk3-gtkspell3 lablgtk3-sourceview3; do
+	echo -e "\nversion: \"%{version}\"" >> ${p}.opam
+done
 
 %build
 dune build %{?_smp_mflags}
