@@ -10,21 +10,26 @@
 Summary:	GTK+3 binding for OCaml
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla
 Name:		ocaml-lablgtk3
-Version:	3.1.1
-Release:	4
-License:	LGPL with linking exceptions
+Version:	3.1.2
+Release:	1
+License:	LGPL v2.1 with linking exceptions
 Group:		Libraries
+#Source0Download: https://github.com/garrigue/lablgtk/releases
 Source0:	https://github.com/garrigue/lablgtk/archive/%{version}/lablgtk-%{version}.tar.gz
-# Source0-md5:	c55c37b3ff0eaa2563f07a3fe01f9243
+# Source0-md5:	e991d9419a722fc513f4b4878e8c2cbe
 URL:		http://lablgtk.forge.ocamlcore.org/
 BuildRequires:	camlp5
+BuildRequires:	goocanvas2-devel >= 2.0.4
 BuildRequires:	gtk+3-devel >= 3.18
-BuildRequires:	gtksourceview3-devel
-BuildRequires:	gtkspell3-devel
+BuildRequires:	gtksourceview3-devel >= 3.18
+BuildRequires:	gtkspell3-devel >= 3.0.4
 BuildRequires:	help2man
 BuildRequires:	ocaml >= 1:4.05.0
 BuildRequires:	ocaml-cairo2-devel >= 0.6
 BuildRequires:	ocaml-dune >= 1.8
+BuildRequires:	ocaml-findlib-devel
+BuildRequires:	pkgconfig
+Requires:	gtk+3 >= 3.18
 %requires_eq	ocaml-runtime
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -53,23 +58,60 @@ OCaml programs using LablGtk.
 Wiązania GTK+3 dla OCamla. Pakiet ten zawiera pliki niezbędne do
 tworzenia programów używających LablGtk.
 
+%package goocanvas
+Summary:	GTK+3 binding for OCaml - GooCanvas support
+Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - obsługa GooCanvas
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	goocanvas2 >= 2.0.4
+%requires_eq	ocaml-runtime
+
+%description goocanvas
+GTK+3 binding for OCaml, GooCanvas support. This package contains
+files needed to run bytecode OCaml programs using LablGtk-GooCanvas.
+
+%description goocanvas -l pl.UTF-8
+Wiązania GTK+3 dla OCamla, obsługa GooCanvas. Ten pakiet zawiera pliki
+niezbędne do tworzenia programów używających LablGtk-GooCanvas.
+
+%package goocanvas-devel
+Summary:	GTK+3 binding for OCaml - GooCanvas support, development part
+Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - obsługa GooCanvas, część programistyczna
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-goocanvas = %{version}-%{release}
+%requires_eq	ocaml
+
+%description goocanvas-devel
+GTK+3 binding for OCaml, GooCanvas support. This package contains
+files needed to develop OCaml programs using LablGtk-GooCanvas.
+
+%description goocanvas-devel -l pl.UTF-8
+Wiązania GTK+3 dla OCamla, obsługa GooCanvas. Ten pakiet zawiera
+binaria potrzebne do uruchamiania programów używających
+LablGtk-GooCanvas.
+
 %package gtkspell
 Summary:	GTK+3 binding for OCaml - GtkSpell support
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - obsługa GtkSpella
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	gtkspell3 >= 3.0.4
 %requires_eq	ocaml-runtime
 
 %description gtkspell
-GTK+3 binding for OCaml, GtkSpell support.
+GTK+3 binding for OCaml, GtkSpell support. This package contains files
+needed to run bytecode OCaml programs using LablGtk-GtkSpell.
 
 %description gtkspell -l pl.UTF-8
-Wiązania GTK+3 dla OCamla, obsługa GtkSpella.
+Wiązania GTK+3 dla OCamla, obsługa GtkSpella. Ten pakiet zawiera pliki
+niezbędne do tworzenia programów używających LablGtk-GtkSpell.
 
 %package gtkspell-devel
 Summary:	GTK+3 binding for OCaml - GtkSpell support, development part
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - obsługa GtkSpella, część programistyczna
 Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
 Requires:	%{name}-gtkspell = %{version}-%{release}
 %requires_eq	ocaml
 
@@ -78,14 +120,16 @@ GTK+3 binding for OCaml, GtkSpell support. This package contains files
 needed to develop OCaml programs using LablGtk-GtkSpell.
 
 %description gtkspell-devel -l pl.UTF-8
-Wiązania GTK+3 dla OCamla, obsługa GtkSpella. Ten pakiet zawiera pliki
-niezbędne do tworzenia programów używających LablGtk-GtkSpell.
+Wiązania GTK+3 dla OCamla, obsługa GtkSpella. Ten pakiet zawiera
+binaria potrzebne do uruchamiania programów używających
+LablGtk-GtkSpell.
 
 %package gtksourceview
 Summary:	GTK+3 binding for OCaml - GtkSourceView support
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - wsparcie dla GtkSourceView
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	gtksourceview3 >= 3.18
 %requires_eq	ocaml
 
 %description gtksourceview
@@ -102,6 +146,7 @@ LablGtk-GtkSourceView.
 Summary:	GTK+3 binding for OCaml - GtkSourceView support, development part
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - wsparcie dla GtkSourceView, część programistyczna
 Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
 Requires:	%{name}-gtksourceview = %{version}-%{release}
 %requires_eq	ocaml
 
@@ -191,6 +236,31 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ocaml/lablgtk3/dune-package
 %{_libdir}/ocaml/lablgtk3/opam
 %{_examplesdir}/%{name}-%{version}
+
+%files goocanvas
+%defattr(644,root,root,755)
+%dir %{_libdir}/ocaml/lablgtk3-goocanvas2
+%{_libdir}/ocaml/lablgtk3-goocanvas2/META
+%{_libdir}/ocaml/lablgtk3-goocanvas2/lablgtk3_goocanvas2.cma
+%if %{with ocaml_opt}
+%attr(755,root,root) %{_libdir}/ocaml/lablgtk3-goocanvas2/lablgtk3_goocanvas2.cmxs
+%endif
+%attr(755,root,root) %{_libdir}/ocaml/stublibs/dlllablgtk3_goocanvas2_stubs.so
+
+%files goocanvas-devel
+%defattr(644,root,root,755)
+%{_libdir}/ocaml/lablgtk3-goocanvas2/*.cmi
+%{_libdir}/ocaml/lablgtk3-goocanvas2/*.cmt
+%{_libdir}/ocaml/lablgtk3-goocanvas2/*.cmti
+%{_libdir}/ocaml/lablgtk3-goocanvas2/*.mli
+%{_libdir}/ocaml/lablgtk3-goocanvas2/liblablgtk3_goocanvas2_stubs.a
+%if %{with ocaml_opt}
+%{_libdir}/ocaml/lablgtk3-goocanvas2/*.cmx
+%{_libdir}/ocaml/lablgtk3-goocanvas2/lablgtk3_goocanvas2.a
+%{_libdir}/ocaml/lablgtk3-goocanvas2/lablgtk3_goocanvas2.cmxa
+%endif
+%{_libdir}/ocaml/lablgtk3-goocanvas2/dune-package
+%{_libdir}/ocaml/lablgtk3-goocanvas2/opam
 
 %files gtkspell
 %defattr(644,root,root,755)
