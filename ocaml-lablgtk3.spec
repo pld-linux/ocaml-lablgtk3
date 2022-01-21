@@ -1,13 +1,12 @@
 #
 # Conditional build:
-%bcond_without	ocaml_opt	# skip building native optimized binaries (bytecode is always built)
+%bcond_without	ocaml_opt	# native optimized binaries (bytecode is always built)
 #
 # not yet available on x32 (ocaml 4.02.1), update when upstream will support it
-%ifnarch %{ix86} %{x8664} arm aarch64 ppc sparc sparcv9
+%ifnarch %{ix86} %{x8664} %{arm} aarch64 ppc sparc sparcv9
 %undefine	with_ocaml_opt
 %endif
 
-%define		ocaml_ver	1:4.05.0
 Summary:	GTK+3 binding for OCaml
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla
 Name:		ocaml-lablgtk3
@@ -23,6 +22,7 @@ BuildRequires:	gtk+3-devel >= 3.18
 BuildRequires:	gtksourceview3-devel
 BuildRequires:	gtkspell3-devel
 BuildRequires:	help2man
+BuildRequires:	ocaml >= 1:4.05.0
 BuildRequires:	ocaml-cairo2-devel >= 0.6
 BuildRequires:	ocaml-dune >= 1.8
 %requires_eq	ocaml-runtime
@@ -38,12 +38,12 @@ uruchamiania programów używających LablGtk.
 
 %package devel
 Summary:	GTK+3 binding for OCaml - development part
-Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - cześć programistyczna
+Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - część programistyczna
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-tools = %{version}-%{release}
 Requires:	ocaml-cairo2-devel >= 0.6
-%requires_eq ocaml
+%requires_eq	ocaml
 
 %description devel
 GTK+3 binding for OCaml. This package contains files needed to develop
@@ -58,20 +58,20 @@ Summary:	GTK+3 binding for OCaml - GtkSpell support
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - obsługa GtkSpella
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-%requires_eq ocaml-runtime
+%requires_eq	ocaml-runtime
 
 %description gtkspell
 GTK+3 binding for OCaml, GtkSpell support.
 
 %description gtkspell -l pl.UTF-8
-Wiązania GTK+3 dla OCamla, obsługa GtkSpella
+Wiązania GTK+3 dla OCamla, obsługa GtkSpella.
 
 %package gtkspell-devel
 Summary:	GTK+3 binding for OCaml - GtkSpell support, development part
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - obsługa GtkSpella, część programistyczna
 Group:		Development/Libraries
 Requires:	%{name}-gtkspell = %{version}-%{release}
-%requires_eq ocaml
+%requires_eq	ocaml
 
 %description gtkspell-devel
 GTK+3 binding for OCaml, GtkSpell support. This package contains files
@@ -86,7 +86,7 @@ Summary:	GTK+3 binding for OCaml - GtkSourceView support
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - wsparcie dla GtkSourceView
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
-%requires_eq ocaml
+%requires_eq	ocaml
 
 %description gtksourceview
 GTK+3 binding for OCaml, GtkSourceView support. This package contains
@@ -103,7 +103,7 @@ Summary:	GTK+3 binding for OCaml - GtkSourceView support, development part
 Summary(pl.UTF-8):	Wiązania GTK+3 dla OCamla - wsparcie dla GtkSourceView, część programistyczna
 Group:		Development/Libraries
 Requires:	%{name}-gtksourceview = %{version}-%{release}
-%requires_eq ocaml
+%requires_eq	ocaml
 
 %description gtksourceview-devel
 GTK+3 binding for OCaml, GtkSourceView support. This package contains
@@ -119,7 +119,7 @@ Summary:	GTK+ binding for OCaml - tools
 Summary(pl.UTF-8):	Wiązania GTK+ dla OCamla - narzędzia
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
-%requires_eq ocaml
+%requires_eq	ocaml
 
 %description tools
 GTK+ binding for OCaml. This package contains tools for working with
@@ -137,7 +137,7 @@ for p in lablgtk3 lablgtk3-gtkspell3 lablgtk3-sourceview3; do
 done
 
 %build
-dune build %{?_smp_mflags}
+dune build --verbose %{?_smp_mflags}
 
 help2man -N --version-string=%{version} -o gdk_pixbuf_mlsource3.1 _build/install/default/bin/gdk_pixbuf_mlsource3
 help2man -N --version-string=%{version} -o lablgladecc3.1 _build/install/default/bin/lablgladecc3
@@ -150,16 +150,19 @@ dune install --destdir=$RPM_BUILD_ROOT
 
 cp -p gdk_pixbuf_mlsource3.1 lablgladecc3.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
-cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+cp -pr examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
+# sources
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/ocaml/lablgtk3*/*.ml
+# packaged as %doc
+%{__rm} -r $RPM_BUILD_ROOT%{_prefix}/doc/lablgtk3*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc CHANGES.md README.md
+%doc CHANGELOG.API CHANGES.md LICENSE README.dune.md README.md
 %dir %{_libdir}/ocaml/lablgtk3
 %{_libdir}/ocaml/lablgtk3/META
 %{_libdir}/ocaml/lablgtk3/lablgtk3.cma
